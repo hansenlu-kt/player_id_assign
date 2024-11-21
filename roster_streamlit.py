@@ -1,5 +1,4 @@
-import mlbstatsapi
-import statsapi
+#import mlbstatsapi
 import pandas as pd
 import re 
 import streamlit as st
@@ -391,7 +390,7 @@ def search_mlbam_id(df):
 
 #####################################################################################################
 # MLB Stats API
-mlb = mlbstatsapi.Mlb() # python module for MLB stats API
+#mlb = mlbstatsapi.Mlb() # python module for MLB stats API
 
 # Base URL of the Stats API
 base_url = "https://statsapi.mlb.com/api/v1/"
