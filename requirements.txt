@@ -1,0 +1,6 @@
+streamlit
+pandas
+mlbstatsapi
+time
+re
+unicode
