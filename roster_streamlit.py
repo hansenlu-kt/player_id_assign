@@ -12,7 +12,8 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
 
 # Load credentials
-credentials = Credentials.from_service_account_file("C:\\Users\\HansonLu\\Documents\\player_id_assignment\\player_id_assign\\kinatrax-player-id-f37a83f12f46.json", scopes=SCOPES)
+#credentials = Credentials.from_service_account_file("C:\\Users\\HansonLu\\Documents\\player_id_assignment\\player_id_assign\\kinatrax-player-id-f37a83f12f46.json", scopes=SCOPES)
+credentials = Credentials.from_service_account_file(".\kinatrax-player-id-f37a83f12f46.json", scopes=SCOPES)
 
 # Authenticate with gspread
 gc = gspread.authorize(credentials)
