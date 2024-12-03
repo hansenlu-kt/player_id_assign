@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "kinatrax-player-id",
+  "private_key_id": "f37a83f12f469d1e4a62f6dfe4b0ad66caff7643",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCjmi1Joj+8HqP9\nfFkI5rorrtX8iMSIXJKdSWma4RplVo4Pa0fNCM51iXkqwnJFKg0qF3MVHEALpmfz\nB5F+9DYiGZXs0ueAbC9fbG4vEjahs6U3u7r81R8ck+8C39DUKpVDOeWAm0nfuTA3\nzrCUeDYE8J3R9w8etGTVyb/5kqoeTIHqP+04CKtt0+txnD3lIaNsT5JXr8Xst4dv\ndwBn1ks7K0aQHrKiYkhWGJmmF1GvCzphTftCrZ0uUKfAHD1r6M6VsJzmwF2cnI1k\ne0oVSCJ2lU5WX+Q3pKFgODxc7Z90iGN1KS2N3TZ2ypMAgSdKgDXliDKJgVkn9p8M\n+xOXucfDAgMBAAECggEABvYhMIhA4gZZFV4x2QPIWYzU+ivvq5sUz1s3rSl1mr5L\nc93YGPdjoZ4PPoHg+Y8dLvSp0Z95cjAgguIy5Li2Mk6YZz1fhcK/Y/YUh4Lk5DiQ\nB9vAdyWybzWJmWZgrRvVbMjij822dQNHnqL4NzkY7gOMaPTJperTJ5hax4ngHJiK\nBzT0X03Gtl1DpsiEEmnSKgJQWAYhC1dCduXQhWdC0rqwSAhP3bsKUvaqWh3qvjb7\nq24+dyV5m5gVw/9Xf8S2WmC+VEyOQKxXicNHZs0JCQgwbj2J7sHUR2IFaqfaJPN0\nVf33lmxefr0mbFGKQ0JtbJ/0krQJaqiXE/z/3cV1QQKBgQDa78GaG/3Og3weiG/W\nsJd6MuxKgxyEgPjKTtc4Xly2ezRX/2O56E8l73Ae9f/bnI+4RYfLD+ETx9Cr/0bw\nDwBuEgPo0PanZHYGrDrezPYjD99xjCQIKZoLe+Dno19C+hKbZ/JKHeuqYqbeLwwS\njxLnjWRxHID6rshT+u80xWYXkwKBgQC/TFmkqmFWUtBNTeS4dHFCwp2iEcsIfgQY\nqxgndWQEkDZNufxnX2pW6Qu/WAAA+/xn/9BLu7WEd6oGhFO6A3mX++SypJviK6wb\nTc+U5Cgm3n0t5uDW019QUY5GxTCm0u5Zkzb8+6rWhMe9Aa+38MqSyrO168CGvYps\nbsHkkJlNEQKBgEHQcx2Vro2HHye6kgwy18ZnSnr3wPngH2oJm08ZprtAfDK71knL\nmQdpXAYio0BsZxPY6wJTCrE8jvE1cyi1CccM6Vnyf0NAwu4sliHl8VQG8H+cxjQh\n9WngWnKnvPpQXImVDNPU/MQildESyYlGs0MiUQBjti4lnpkIRSJS+Oa7AoGBAK55\nN2VtFFwEKgHnokztvwNRty3DJre3H4tUOTJ76d4TncOkduXda4KbCODapR5AtYQx\nGEyKhlKsRYGuHSMR2kvZLUwVwCs3A8DfZg15TnmtAOTlp3mnzU3XJHm9jdMJnORL\n1aJE8xq2feoP6LFOR6Q8hk3NGIqLwv2EwwjxLTDRAoGAYmpS2VbJwQTVwocontcM\ne5kcuPtEWVDBWjDSegc7w2qMq5baJXmY6NTJleOvRgvW6QPXwVQaxtLX2VeUwU8c\nXwEtqSKczXAv5Z/GM8vB5TZo8yZKpcX3qUvJmOdSN6YEUosL8KF35xGV6CMHg1ys\n9LAZumW7VmUzvBR6L0ko2Pg=\n-----END PRIVATE KEY-----\n",
+  "client_email": "playeridmanager@kinatrax-player-id.iam.gserviceaccount.com",
+  "client_id": "100527754979495591516",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/playeridmanager%40kinatrax-player-id.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
