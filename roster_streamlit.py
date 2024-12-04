@@ -9,10 +9,7 @@ import gspread
 from google.oauth2.service_account import Credentials
 from streamlit_gsheets import GSheetsConnection
 # import streamlit_authenticator as stauth
-conn = st.connection("gsheets", type= GSheetsConnection)
-df69 = conn.read(worksheet="Sheet33")
 
-st.write(df69)
 
 # SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 
 #           'https://www.googleapis.com/auth/drive']
@@ -469,7 +466,9 @@ if 'site' not in st.session_state:
 
 ########################################################################################################
 # Load Player ID Database
-player_id_db = pd.read_csv(r"C:\Users\HansonLu\Downloads\player_id_db_kinatrax_rev1.csv")
+#player_id_db = pd.read_csv(r"C:\Users\HansonLu\Downloads\player_id_db_kinatrax_rev1.csv")
+conn = st.connection("gsheets", type= GSheetsConnection)
+player_id_db = conn.read(worksheet="Sheet33")
 
 # Upload Roster CSV
 st.title("Player ID Assigner")
