@@ -7,23 +7,29 @@ import time
 from unidecode import unidecode
 import gspread
 from google.oauth2.service_account import Credentials
+from streamlit_gsheets import GSheetsConnection
+# import streamlit_authenticator as stauth
+conn = st.connection("gsheets", type= GSheetsConnection)
+df69 = conn.read(worksheet="Sheet33")
 
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 
-          'https://www.googleapis.com/auth/drive']
+st.write(df69)
 
-# Load credentials
-#credentials = Credentials.from_service_account_file("C:\\Users\\HansonLu\\Documents\\player_id_assignment\\player_id_assign\\kinatrax-player-id-f37a83f12f46.json", scopes=SCOPES)
-credentials = Credentials.from_service_account_file(".\kinatrax-player-id-f37a83f12f46.json", scopes=SCOPES)
+# SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 
+#           'https://www.googleapis.com/auth/drive']
 
-# Authenticate with gspread
-gc = gspread.authorize(credentials)
+# # Load credentials
+# #credentials = Credentials.from_service_account_file("C:\\Users\\HansonLu\\Documents\\player_id_assignment\\player_id_assign\\kinatrax-player-id-f37a83f12f46.json", scopes=SCOPES)
+# credentials = Credentials.from_service_account_file(".\kinatrax-player-id-f37a83f12f46.json", scopes=SCOPES)
 
-spreadsheet = gc.open_by_url("https://docs.google.com/spreadsheets/d/1HkKHrnPfdyVFfqSIHrGWJpI_8EiUcf6Buvn8Yi_01cU/edit")
-worksheet = spreadsheet.worksheet("Sheet33")
-expected_headers = ["ID", "FirstName", "LastName","UniformNumber","Weight","IsPitcher","Team","Year"]  # Replace with your desired headers
-data = worksheet.get_all_records(expected_headers=expected_headers)
+# # Authenticate with gspread
+# gc = gspread.authorize(credentials)
 
-player_id_db = pd.DataFrame(data)
+# spreadsheet = gc.open_by_url("https://docs.google.com/spreadsheets/d/1HkKHrnPfdyVFfqSIHrGWJpI_8EiUcf6Buvn8Yi_01cU/edit")
+# worksheet = spreadsheet.worksheet("Sheet33")
+# expected_headers = ["ID", "FirstName", "LastName","UniformNumber","Weight","IsPitcher","Team","Year"]  # Replace with your desired headers
+# data = worksheet.get_all_records(expected_headers=expected_headers)
+
+# player_id_db = pd.DataFrame(data)
 
 
 def search_existing_players(df, player_id_db):
@@ -463,7 +469,7 @@ if 'site' not in st.session_state:
 
 ########################################################################################################
 # Load Player ID Database
-#player_id_db = pd.read_csv(r"C:\Users\HansonLu\Downloads\player_id_db_kinatrax_rev1.csv")
+player_id_db = pd.read_csv(r"C:\Users\HansonLu\Downloads\player_id_db_kinatrax_rev1.csv")
 
 # Upload Roster CSV
 st.title("Player ID Assigner")
