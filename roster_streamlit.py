@@ -106,22 +106,24 @@ def player_check(df,player_id_db, endpoint,leagues_endpoint):
             
             roster_df.loc[index, 'MLBAMID'] = data['people'][0]['id']
             roster_df.loc[index, 'DB_ID'] = player_id_db.loc[existing_players.index, 'ID'].unique()
-            if roster_df.loc[index, 'MLBAMID'] == int(roster_df.loc[index, 'kt_id']):
-                st.success(f"MLBAMID: {data['people'][0]['id']} ID:{player_id_db.loc[existing_players.index, 'ID'].unique()} Player {row['FirstName']} {row['LastName']} already exists in the database.")
+            if roster_df.loc[index, 'MLBAMID'] == int(roster_df.loc[index, 'DB_ID']):
+                alert = st.success(f"MLBAMID: {data['people'][0]['id']} ID:{player_id_db.loc[existing_players.index, 'ID'].unique()} Player {row['FirstName']} {row['LastName']} already exists in the database.")
 
-            elif roster_df.loc[index, 'MLBAMID'] != roster_df.loc[index, 'kt_id']:
-                st.info(f"MLBAMID: {data['people'][0]['id']} ID:{player_id_db.loc[existing_players.index, 'ID'].values.unique()} Player {row['FirstName']} {row['LastName']} already exists in the database.")
+            elif roster_df.loc[index, 'MLBAMID'] != roster_df.loc[index, 'DB_ID']:
+                alert =st.info(f"MLBAMID: {data['people'][0]['id']} ID:{player_id_db.loc[existing_players.index, 'ID'].unique()} Player {row['FirstName']} {row['LastName']} already exists in the database.")
 
         # elif data['people'] and existing_players.empty:
         #     roster_df.loc[index, 'MLBAMID'] = data['people'][0]['id']
         #     st.warning(f"MLBAMID exists: {data['people'][0]['id']} Player {row['FirstName']} {row['LastName']} does not exist in the database.")
 
         elif not data['people'] and not existing_players.empty:
-            roster_df.loc[index, 'kt_id'] = player_id_db.loc[existing_players.index, 'ID'].values.unique()
-            st.warning(f"ID:{player_id_db.loc[existing_players.index, 'ID'].values.unique()} Player: {row['FirstName']} {row['LastName']} found in the database.")
+            roster_df.loc[index, 'DB_ID'] = player_id_db.loc[existing_players.index, 'ID'].values.unique()
+            alert =st.warning(f"ID:{player_id_db.loc[existing_players.index, 'ID'].values.unique()} Player: {row['FirstName']} {row['LastName']} found in the database.")
 
         elif not data['people'] and  existing_players.empty:
-            st.error(f"Player: {row['FirstName']} {row['LastName']} does not exist in the database and MLBAMID not found.")
+            alert = st.error(f"Player: {row['FirstName']} {row['LastName']} does not exist in the database and MLBAMID not found.")
+
+    
     #st.write(roster_df)
     end_time = time.time()
     execution_time = end_time - start_time
@@ -431,6 +433,7 @@ league_list = league_response.json()
 #######################################################################################################\
 # Pre-defined ranges for each site
 site_ranges = {
+    'None': [(110000,200000)],
     'ABW' : [(320000,320999),(904000,904999)],
     'AUB' : [(321000,321999),(500870,500898),(700299,700499)],
     'MEM' : [(900000,900499)],
@@ -472,15 +475,17 @@ player_id_db = conn.read(worksheet="Sheet33")
 
 # Upload Roster CSV
 st.title("Player ID Assigner")
-st.header('1. Import Roster CSV')
-uploaded_file = st.file_uploader("Upload Roster CSV", type="csv")
-st.header('2. Enter Additional Information')
+
+st.header('Enter Team Information')
+st.write('Critical Information Do not Ignore Entry')
+team_name = st.text_input('Team Name')
 col1, col2, col3 = st.columns(3)
 st.session_state.site = col1.selectbox('Site',site_ranges) # Should have pre-assigned intervals for each site, input the interval and find available ids from DB
-date_of_assignment = col2.date_input('Todays Date')
+date_of_assignment = col2.date_input('Date of Entry')
 league = col3.selectbox('League', [sport['name'] for sport in league_list['sports']])
 league_id = next((sport['id'] for sport in league_list['sports'] if sport['name'] == league), None)
 
+st.write('If you want to create a custom interval for this session of player assignment or custom site, please check the following box, otherwise ignore')
 # Insert into Dataframe about site, year, and league
 if st.checkbox("Custom Interval/Site"):
     st.session_state.start_interval = col1.number_input('Start Interval', step= 1)
@@ -497,6 +502,9 @@ detailed_availability = get_detailed_site_availability(player_id_db)
 with st.expander("Detailed Site Availability:"):
     st.dataframe(detailed_availability.set_index('Site'))
 
+st.header('Import Roster CSV')
+st.write("Ensure roster csv has the following headers [ID,FirstName,LastName,UniformNumber,Weight]")
+uploaded_file = st.file_uploader("Upload Roster CSV", type="csv")
 
 if uploaded_file is not None:
     # Intake Roster CSV
@@ -528,33 +536,37 @@ if uploaded_file is not None:
     # Adding additional Information
     existing['site'] = st.session_state.site
     existing['league_id'] = league_id
-    existing['date_of_assignment'] = date_of_assignment
+    existing['EntryDate'] = date_of_assignment
+    existing['Team'] = team_name
+    st.write('___')
+    st.write("Auto-Filled BAMID as Player ID")
+    #if st.button('Assign MLBAM ID as Player_ID'):
 
-    st.header("3. Auto-Fill BAMID as Player ID")
-    if st.button('Assign MLBAM ID as Player_ID'):
+    # Find rows where DB_ID is empty and MLBAMID exists
+    #existing = st.session_state.existing
+    mask = (existing['DB_ID'].isna()) & (existing['MLBAMID'].notna())
+    # Update DB_ID with MLBAMID where mask is True
+    existing.loc[mask, 'DB_ID'] = existing.loc[mask, 'MLBAMID']
+    existing['DB_ID'] = existing['DB_ID'].astype('Int64') 
+    existing['MLBAMID'] = existing['MLBAMID'].astype('Int64') 
+    columns_order = ['DB_ID', 'MLBAMID'] + [col for col in existing.columns if col not in ['DB_ID', 'MLBAMID']]
+    existing = existing[columns_order]
+    st.session_state.existing = existing
+    #st.write(st.session_state.sequential_query_df)
 
-        # Find rows where DB_ID is empty and MLBAMID exists
-        #existing = st.session_state.existing
-        mask = (existing['DB_ID'].isna()) & (existing['MLBAMID'].notna())
-        # Update DB_ID with MLBAMID where mask is True
-        existing.loc[mask, 'DB_ID'] = existing.loc[mask, 'MLBAMID']
-        existing['DB_ID'] = existing['DB_ID'].astype('Int64') 
-        existing['MLBAMID'] = existing['MLBAMID'].astype('Int64') 
-        st.session_state.existing = existing
-        #st.write(st.session_state.sequential_query_df)
-
-        # Optional: Show success message
-        num_updated = mask.sum()
-        if num_updated > 0:
-            st.success(f"Updated {num_updated} player(s) with new DB_ID from MLBAMID")
-        else:
-            st.info("No new DB_IDs to assign")
+    # Optional: Show success message
+    num_updated = mask.sum()
+    if num_updated > 0:
+        st.success(f"Updated {num_updated} player(s) with new DB_ID from MLBAMID")
+    else:
+        st.info("No new DB_IDs to assign")
     if 'existing' in st.session_state and (st.session_state.existing is not None and not st.session_state.existing.empty):
         st.session_state.empty_db_id_df = st.session_state.existing [st.session_state.existing ['DB_ID'].isna()]
         
-
+    st.header('Manually Input BAMID, if Query Tool Cannot Find')
+    st.write('If No MLBAMID is automatically detected, please Google "Player name and "baseball", if MLBAM ID exists, Input MLBAMID into cell above and click on the button below to administer changes')
     st.session_state.empty_db_id_df = st.data_editor(st.session_state.empty_db_id_df )
-    st.header('4. Manually Input BAMID, if Query Tool Cannot Find')
+    
     if st.button('Manual MLBAMID Input'):
         if not st.session_state.empty_db_id_df[st.session_state.empty_db_id_df['MLBAMID'].notna()].empty:
             #st.write(st.session_state.empty_db_id_df[st.session_state.empty_db_id_df['MLBAMID'].notna()])
@@ -586,20 +598,18 @@ if uploaded_file is not None:
             st.write('No BAM ID Entered')
         
     
-        # we want to check the dataframe to be robust before pushing it into the database
-        # We also want to create a column for cubs ids and site code and league
-        # We want to also have a uploaded roster with assigned ids for manual input
 
     st.session_state.empty_db_id_df = st.session_state.empty_db_id_df[st.session_state.empty_db_id_df['MLBAMID'].isna()]
     num_ids_needed = len(st.session_state.empty_db_id_df)
 
     selected_site = st.session_state.site  # or however you're getting the site
-    
-    st.header("5. if No-BAMID, Assign Player ID")
+
+    st.header("Assign Player ID if No BAMID exists")
     if selected_site:
         available_ids = get_available_ids(player_id_db, selected_site, num_ids_needed)
         if len(available_ids) >= num_ids_needed:
             st.write(f"Available IDs for {selected_site}: {available_ids}")
+            st.write('If no MLBAMID exist and no player ID is assigned, then auto assign based on site range or sequential order')
             if st.button('Assign Available ID to New Players'): # We can move this button to process below
                 st.session_state.empty_db_id_df.loc[st.session_state.empty_db_id_df['DB_ID'].isna(), 'DB_ID'] = available_ids[:num_ids_needed]
                 assigned_player_id_df = st.session_state.existing.merge(st.session_state.empty_db_id_df, on=['FirstName', 'LastName'], how='left', suffixes=('', '_new'))
@@ -624,9 +634,23 @@ if uploaded_file is not None:
             #If there's not enough available IDs start at 100000
             if len(available_ids) < num_ids_needed:
                 st.write(len(available_ids))
-
+    st.subheader('')
     if 'existing' in st.session_state and (st.session_state.existing is not None and not st.session_state.existing.empty):
         st.dataframe(st.session_state.existing.style.apply(lambda x: ['background-color: pink' if pd.isna(x['DB_ID']) else '' for i in x], axis=1))
     #t.dataframe(st.session_state.existing.style.apply(lambda x: ['background-color: pink' if pd.isna(x['DB_ID']) else '' for i in x], axis=1))
 
+    # if there's no empty DB_ID:
+    existing['Unique_Key'] =  existing['EntryDate'].astype(str).str.replace('-', '') + existing['DB_ID'].astype(str)
+    existing = existing.drop(['FirstName_norm','LastName_norm'], axis=1, inplace=False)
+    st.session_state.existing  = existing
+    st.dataframe(st.session_state.existing)   
+    #button to submit and push, with a success/confirmation
+    if st.button('Push to Database and Export Roster CSV'):
+        if existing['DB_ID'].isna().any() is True:
+            st.warning('Unassigned Player ID, continue?')
+        else:
+            existing['Unique_Key'] =  existing['EntryDate'].astype(str).str.replace('-', '') + existing['DB_ID'].astype(str)
+            existing = existing.drop(['FirstName_norm','LastName_norm'], axis=1, inplace=False)
+
+    #append the data to google sheets, export CSV as well
     #I'm just going to keep this as a google sheet, and using api to append rows of new assigned IDs to the page
